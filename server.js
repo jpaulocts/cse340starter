@@ -32,6 +32,22 @@ app.get("/", baseController.buildHome)
 
 app.use("/inv", inventoryRoute)
 
+// Error route
+app.use(async (req, res, next) => {
+  next({status: 404, message: 'Sorry, we appear to have lost that page.'})
+})
+
+/*****Express error handler */
+
+app.use(async (err, req, res, next) => {
+  let nav= await utilities.getNav()
+  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
+  res.render("errors/error", {
+    title: err.status || 'Server Error', 
+    message: err.message,
+    nav
+  })
+})
 
 /* ***********************
  * Local Server Information
