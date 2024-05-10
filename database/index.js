@@ -16,9 +16,11 @@ if (process.env.NODE_ENV == "development") {
         },
     })
 
-// Added for troubleshooting queries
-// during development
-
+} else {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+    })
+}
 module.exports = {
     async query(text, params) {
         try {
@@ -31,8 +33,3 @@ module.exports = {
         }
     },
 } 
-} else {
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-    })
-}
