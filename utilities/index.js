@@ -70,10 +70,10 @@ Util.details = async function(data){
     <h1>${data[0].inv_year} ${data[0].inv_model} ${data[0].inv_make}</h1>
     <img id="detailimg" src="${data[0].inv_image}" alt="${data[0].inv_model}"></section>
     <section><h2>${data[0].inv_model} ${data[0].inv_make} Details</h2>
-    <h3 id="price"> <span>Price</span>: $${data[0].inv_price.toLocaleString('en-US', {style: 'currency', currency: 'USD'})}</h3>
+    <h3 id="price"> <span>Price</span>: ${Number(data[0].inv_price).toLocaleString('en-US', {style: 'currency', currency: 'USD'})}</h3>
     <p><span>Description</span>: ${data[0].inv_description}</p>
     <p><span>Color</span>: ${data[0].inv_color}</p>
-    <p><span>Miles</span>: ${data[0].inv_miles}</p></section>
+    <p><span>Miles</span>: ${Number(data[0].inv_miles).toLocaleString('en')}</p></section>
     </div>`
   } else{
 

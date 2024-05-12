@@ -13,6 +13,9 @@ const static = require("./routes/static")
 const baseController = require("./controllers/baseController")
 const inventoryRoute = require("./routes/inventoryRoute")
 const utilities = require("./utilities/")
+const errorController = require("./controllers/errorController")
+const router = express.Router();
+
 
 /* ***********************
  * View Engine and Templates
@@ -31,42 +34,45 @@ app.get("/", utilities.handleErrors(baseController.buildHome))
 
 // Inventory route
 
-app.use("/inv", inventoryRoute)
+app.use("/inv", utilities.handleErrors(inventoryRoute))
 
 
 // Error route
+app.use('/trigger-error', (inventoryRoute))
+
+/*******500 Error Middleware
+ */
+
+app.use(async (err, req, res, next) =>{
+  let nav = await utilities.getNav()
+  console.error(`error at: "${req.originalUrl}": ${err.message}`)
+  if(err.status == 500) {message = err.message} else{ next()} 
+  res.render("errors/error", {
+    title: err.status || 'Server Error', 
+   message: err.message || 'Internal Server Error',
+    nav
+  })})
+
+
+// 404 Middleware
 app.use(async (req, res, next) => {
   next({status: 404, message: 'Sorry, we appear to have lost that page.'})
 })
 
+
 /*****Express error handler */
 
 app.use(async (err, req, res, next) => {
+  
   let nav= await utilities.getNav()
   console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  if (err.status = 404){ message= err.message} else {message = 'Oh no! The was a crash. Maybe try a different route?'}
+  if (err.status == 404){ message= err.message} else {message = 'Oh no! The was a crash. Maybe try a different route?'}
   res.render("errors/error", {
     title: err.status || 'Server Error', 
     message,
     nav
   })
 })
-
-//500 Error Route
-app.use(async (req, res, next) => {
-  next({status:500, message:'Oh no! The was a crash. Maybe try a different route?' })
-})
-
-// Middleware
-app.use(async (err, req, res, next) => {
-  let nav= await utilities.getNav()
-  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
-  if (err.status = 500){ message= err.message} else {message = 'Oh no! The was a crash. Maybe Something went wrong'}
-  res.render("errors/error", {title: err.status} || "Server Error",
-  message,
-  nav)
-})
-
 /* ***********************
  * Local Server Information
  * Values from .env (environment) file

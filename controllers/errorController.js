@@ -1,9 +1,9 @@
+
 exports.triggerError = (req, res, next) => {
-    try {
-      // Simulate an intentional error (division by zero)
-      const result = 1 / 0;
-      res.send(result);
-    } catch (err) {
-      next(err); // Pass the error to the error handling middleware
+    try{
+        //Causing an intentional error
+        throw new Error('500 ERROR')
+    } catch {error}{
+        next({status: 500, message: 'SERVER ERROR'})
     }
-  };
+}
