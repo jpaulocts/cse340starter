@@ -105,7 +105,7 @@ nav li a:hover{
 #menu {
   display: block;
   position: absolute;
-  left: 22em;
+  right: 1em;
   top: 4em;
   z-index: 1;
 }
@@ -224,9 +224,26 @@ figcaption {
   background: rgb(207, 201, 201);
 }
 
+#details {
+
+  display: flex;
+  flex-direction: column;
+}
+
+
 #detailimg {
 
-  width: 50%;
+  width: 80%;
+
+  
+}
+
+span {
+  font-weight: bold;
+}
+
+#price {
+  background-color: antiquewhite;
 }
 
 @media screen and (min-width: 650px) 
@@ -297,11 +314,34 @@ figcaption {
   #hero {
     justify-self: center;
   }
-}
+
 
 #inv-display {
 
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+}
+
+#details {
+
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  justify-content:center;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+
+}
+
+#details section {
+
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+}
+
+
 }
