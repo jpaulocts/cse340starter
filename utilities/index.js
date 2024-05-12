@@ -29,8 +29,7 @@ Util.getNav = async function (req, res, next){
  * Build classification view HTML
  */
 
-Util.buildClassificationGrid= async function(data){
-    
+Util.buildClassificationGrid = async function(data){
     let grid
     if (data.length > 0) {
         grid = '<ul id="inv-display">'
@@ -58,6 +57,37 @@ Util.buildClassificationGrid= async function(data){
         grid += '<p class="notice">Sorry, no matching vehicles could be found.</p>'
       }
       return grid
+      
 }
+
+
+Util.details = async function(data){
+  let div
+  console.log(data)
+  if (data.length >0) {
+    div = `<div id="details">
+    <h1>${data[0].inv_year} ${data[0].inv_model} ${data[0].inv_make}</h1>
+    <img id="detailimg" src="${data[0].inv_image}" alt="${data[0].inv_model}">
+    <h2>${data[0].inv_model} ${data[0].inv_make} Details</h2>
+    <h3> Price: ${data[0].inv_price}</h3>
+    <p>Description: ${data[0].inv_description}</p>
+    <p>Color: ${data[0].inv_color}</p>
+    <p>Miles: ${data[0].inv_miles}</p>
+    </div>`
+  } else{
+
+    div = '<p class="notice">Sorry, no matching vehicles could be found.</p>'
+  }
+
+  return div
+
+} 
+
+/**********Middleware For Handling Errors
+ * Wrap other function in this for
+ * General error handling
+ */
+
+Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = Util
