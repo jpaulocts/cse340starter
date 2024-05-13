@@ -38,21 +38,7 @@ app.use("/inv", utilities.handleErrors(inventoryRoute))
 
 
 // Error route
-app.use('/trigger-error', (inventoryRoute))
-
-/*******500 Error Middleware
- */
-
-app.use(async (err, req, res, next) =>{
-  let nav = await utilities.getNav()
-  console.error(`error at: "${req.originalUrl}": ${err.message}`)
-  if(err.status == 500) {message = err.message} else{ next()} 
-  res.render("errors/error", {
-    title: err.status || 'Server Error', 
-   message: err.message || 'Internal Server Error',
-    nav
-  })})
-
+app.use('/trigger-error', utilities.handleErrors((inventoryRoute)))
 
 // 404 Middleware
 app.use(async (req, res, next) => {
