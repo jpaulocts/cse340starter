@@ -5,9 +5,17 @@
       res.redirect('/')
     } %>
 <%- messages() %>
-<form action="/login" method="post">
+<form action="/register" method="post">
     <div>
-        <label for="email">Email:</label>
+        <label for="account_firstname">First name</label>
+        <input type="text" id="firstname" name="account_firstname" required>
+    </div>
+    <div>
+        <label for="account_lasname">Last name</label>
+        <input type="text" id="lastname" name="account_lastname" required>
+    </div>
+    <div>
+        <label for="email">Email address:</label>
         <input type="email" id="email" name="email" required>
     </div>
     <div>
@@ -15,8 +23,7 @@
         <input type="password" id="password" name="password" required>
         <span id="showPswd">Show Password</span>
     </div>
-    <button type="submit">Login</button>
-    <p>No account? <a href="../account/register">Sign up</a></p>
+    <button type="submit">Register</button>
 </form>
 <script src="../../js/password.js"></script>
     

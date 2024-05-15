@@ -255,7 +255,7 @@ span {
 
 
 form {
-  max-width: 400px;
+  width: clamp(300px, 35%, 700px); 
   background-color:var(--secondary-color); 
   padding: 20px;
   border-radius: 5px;
@@ -285,6 +285,7 @@ form button {
   background-color: #2ecc71; 
   color: #fff; 
   cursor: pointer;
+  margin-top: 1em;
 }
 
 form button:hover {
@@ -297,6 +298,18 @@ form a {
 
 form a:hover {
   text-decoration: underline; 
+}
+
+#showPswd {
+
+  background: var(--primary-color);
+  color: var(--terciary-color);
+  font-family: var(--font-paragraph);
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  
 }
 
 
