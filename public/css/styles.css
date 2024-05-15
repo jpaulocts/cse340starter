@@ -8,7 +8,8 @@
   /* colors */
   --primary-color:black;
   --secondary-color: rgb(45, 136, 197);
-  --terciary-color: white; 
+  --terciary-color: white;
+  --quaternary-color: red; 
   
 
   /* sizes */
@@ -245,6 +246,59 @@ span {
 #price {
   background-color: antiquewhite;
 }
+
+.notice {
+  list-style: none;
+  font-family: var(--font-emphasis);
+  color: var(--quaternary-color);
+}
+
+
+form {
+  max-width: 400px;
+  background-color:var(--secondary-color); 
+  padding: 20px;
+  border-radius: 5px;
+  justify-self: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc; 
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333; 
+}
+
+form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #2ecc71; 
+  color: #fff; 
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #27ae60; 
+}
+
+form a {
+  color: #fff; 
+}
+
+form a:hover {
+  text-decoration: underline; 
+}
+
 
 @media screen and (min-width: 650px) 
 {
