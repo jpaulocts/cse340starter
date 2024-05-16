@@ -21,7 +21,6 @@ invCont.buildByClassificationId = async function (req, res, next){
 invCont.buildByDetails = async function (req, res, next){
     const invId = req.params.invId
     const data = await invModel.getDetailsById(invId)
-    console.log("Teste")
     const div = await utilities.details(data)
     let nav = await utilities.getNav()
     const className = data[0].inv_model
