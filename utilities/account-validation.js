@@ -1,6 +1,7 @@
 const utilities = require(".")
 const {body, validationResult} = require("express-validator") //body request the body of request and validationResult is an object that contains all errors detected.
 const validate = {}
+const accountModel = require("../models/account-model")
 
 /******
  * Registration data validation
@@ -27,11 +28,15 @@ validate.registrationRules = () => {
             .trim()
             .escape()
             .notEmpty()
-            .isLength({min: 2})
-            .withMessage("Please provide a first name")
             .isEmail()
             .normalizeEmail() //refer to validator.js docs
-            .withMessage("A valid email is required"), //message sent when error
+            .withMessage("A valid email is required") //message sent when error
+            .custom(async(account_email) => {
+                const emailExists = await accountModel.checkExistingEmail(account_email)
+                if (emailExists){
+                    throw new Error("Email exists. Please log in or use different email")
+                }
+            }),
         
         body("account_password")
             .trim()
@@ -68,7 +73,9 @@ validate.checkRegData = async (req, res, next) => {
             account_email,
         })
         return
+        
     }
+    
     next()
 
 
