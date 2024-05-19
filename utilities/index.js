@@ -87,7 +87,7 @@ Util.details = async function(data){
 // utility for management page
 
 Util.managerLinks = function() {
-  let div = '<div class="mnglink"><a href="/add-classification" target="_blank">Add New Classification</a><a href="/add-inventory" target="_blank">Add New Vehicle</a></div>'
+  let div = '<div class="mnglink"><a href="../inv/add-classification" target="_blank">Add New Classification</a><a href="../inv/add-inventory" target="_blank">Add New Vehicle</a></div>'
   return div
 }
 
