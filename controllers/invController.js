@@ -55,11 +55,7 @@ invCont.registerClassForm = async function(req, res) {
 
     if (regResult) {
         req.flash("notice", `Congratulations, you are registered a ${classification_name} type.`)
-        res.status(201).render("./inventory/management", {
-            title: "Vehicle Management",
-            nav,
-            div
-        } )
+        res.redirect("/inv")
     } else{
         req.flash("notice", "Sorry, the addition failed.")
         res.status(501).render("./inventory/add-classification", {
