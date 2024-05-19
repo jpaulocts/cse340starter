@@ -84,6 +84,27 @@ Util.details = async function(data){
 
 } 
 
+// utility for management page
+
+Util.managerLinks = function() {
+  let div = '<div class="mnglink"><a href="inv/add-classification" target="_blank">Add New Classification</a><a href="inv/add-inventory" target="_blank">Add New Vehicle</a></div>'
+  return div
+}
+
+
+Util.getOptions = async function (req, res, next){
+  let data = await invModel.getClassifications()
+  let select = '<select name="classification_name" id="classification_name">'
+  select += '<option value="select">Select an option</option>'
+  data.rows.forEach((row)=>{
+      select += `<option value=${row.classification_name}>` + row.classification_name + '</option>'
+    
+  })
+  select += "</select>"
+  return select
+}
+
+
 /**********Middleware For Handling Errors
  * Wrap other function in this for
  * General error handling

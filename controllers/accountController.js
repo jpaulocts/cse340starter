@@ -28,7 +28,7 @@ accountController.registerAccount = async function(req, res) {
     try{
         hashedPassword = await bcrypt.hashSync(account_password, 10)
     } catch (error) {
-        req.flash("notice", 'Sorry, there was an error processing the ragistration.')
+        req.flash("notice", 'Sorry, there was an error processing the registration.')
         res.status(500).render("account/register", {
             title: "Register",
             nav, 
