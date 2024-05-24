@@ -31,4 +31,8 @@ router.post("/add-classification", regValidate.classificationRules(), regValidat
 
 router.post("/add-inventory", regValidate.inventoryRules(), regValidate.checkInvData, utilities.handleErrors(invController.registerInvForm))
 
+// Mangamente selection route
+
+router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
+
 module.exports = router;

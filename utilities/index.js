@@ -1,5 +1,7 @@
 const invModel = require("../models/inventory-model")
 const Util = {}
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 /**************
  * Constructs the nav HTML unorderd list
@@ -97,19 +99,49 @@ Util.getOptions = async function (req, res, next){
   let select = '<select name="classification_name" id="classification_name">'
   select += '<option value="select">Select an option</option>'
   data.rows.forEach((row)=>{
-      select += `<option value=${row.classification_name}>` + row.classification_name + '</option>'
+      select += `<option value=${row.classification_id}>` + row.classification_name + '</option>'
     
   })
   select += "</select>"
   return select
 }
 
+Util.accountLinks = function() {
+  let div = '<div class="mnglink"><p>You are logged in</p><a href="#" target="_blank">Edit Account Information</a></div>'
+  return div
+}
 
+Util.checkJWTToken = async function(req, res, next) {
+  if(req.cookies.jwt){
+    jwt.verify(req.cookies.jwt, process.env.ACCESS_TOKEN_SECRET, function(err, accountData){
+      if(err) {
+        req.flash("Please log in")
+        res.cleaCookie("jwt")
+        return res.redirect("../account/login")
+      }
+      res.locals.accountData = accountData
+      res.locals.loggedin = 1
+      next()
+    })
+  } else{
+    next()
+  }
+}
+
+//Check Login
+
+Util.checkLogin = (req, res, next) => {
+  if(res.locals.loggedin) {
+    next()
+  } else {
+    req.flash("notice", "Please log in")
+    return res.redirect("../account/login")
+  }
+} 
 /**********Middleware For Handling Errors
  * Wrap other function in this for
  * General error handling
  */
-
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = Util

@@ -58,7 +58,7 @@ async function registerClass(classification_name) {
 
 async function registerInv(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_name) {
     try{
-        const classification = `SELECT classification_id FROM public.classification WHERE classification_name='${classification_name}'`
+        const classification = `SELECT classification_id FROM public.classification WHERE classification_id='${classification_name}'`
         const result = await pool.query(classification)
         const classification_id = result.rows[0].classification_id
         const sql = "INSERT INTO inventory(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING*"
@@ -67,5 +67,7 @@ async function registerInv(inv_make, inv_model, inv_year, inv_description, inv_i
         return error.message
     }
 }
+
+
 
 module.exports = {getClassifications, getInventoryByClassificationId, getDetailsById, checkExistingType, registerClass, registerInv}

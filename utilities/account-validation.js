@@ -229,4 +229,65 @@ validate.checkInvData = async (req, res, next) => {
 }
 
 
+/**********
+ *  Login Rules and validation
+ */
+
+//
+
+validate.loginRules = () => {
+    return [
+        //classification name is required and must be string
+        body("account_email")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isEmail()
+            .withMessage("Please provide a valid email"),
+
+        body("account_password")
+            .trim()
+            .notEmpty()
+            .isStrongPassword({
+                minLength: 12,
+                minLowercase: 1,
+                minUppercase: 1,
+                minNumbers: 1,
+                minSymbols: 1,
+        })
+            .withMessage('Password does not meet requirements')
+
+
+
+    ]
+
+
+} 
+
+/***Check login */
+
+validate.checkLoginData = async (req, res, next) => {
+    const {account_email, account_password} = req.body
+    let errors = []
+    errors = validationResult(req)
+    if(!errors.isEmpty()) {
+        let nav = await utilities.getNav()
+        res.render("account/login", {
+            errors, 
+            title: "Login",
+            nav,
+            account_email,
+            account_password,
+        })
+        return
+        
+    }
+    
+    next()
+
+   
+}
+
+
+
  module.exports = validate
