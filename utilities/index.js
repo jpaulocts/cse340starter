@@ -96,14 +96,11 @@ Util.managerLinks = function() {
 
 Util.getOptions = async function (req, res, next){
   let data = await invModel.getClassifications()
-  let select = '<select name="classification_name" id="classification_name">'
-  select += '<option value="select">Select an option</option>'
-  data.rows.forEach((row)=>{
-      select += `<option value=${row.classification_id}>` + row.classification_name + '</option>'
-    
-  })
-  select += "</select>"
-  return select
+  let options = '<option value="select" disabled hidden>Select an option</option>';
+  data.rows.forEach((row) => {
+    options += `<option value="${row.classification_id}">${row.classification_name}</option>`
+  });
+  return options
 }
 
 Util.accountLinks = function() {

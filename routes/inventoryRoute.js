@@ -35,4 +35,15 @@ router.post("/add-inventory", regValidate.inventoryRules(), regValidate.checkInv
 
 router.get("/getInventory/:classification_id", utilities.handleErrors(invController.getInventoryJSON))
 
+// edit route
+
+router.get("/edit/:inv_id", utilities.handleErrors(invController.buildInvEdit))
+router.post("/update/", regValidate.editRules(), regValidate.checkEdit, utilities.handleErrors(invController.updateInventory))
+
+// delete route
+
+router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteView))
+router.post("/delete", utilities.handleErrors(invController.deleteItem))
+
+
 module.exports = router;

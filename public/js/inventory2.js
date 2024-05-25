@@ -3,8 +3,10 @@
 let classificationList = document.querySelector("#classification_name")
 classificationList.addEventListener("change", function() {
     let classification_id = classificationList.value
+    if(classification_id != 'select') {
     console.log(`classificationId is:${classification_id}`)
     let classIdURL = "inv/getInventory/" + classification_id
+    
     fetch(classIdURL)
         .then(function(response) {
             if (response.ok){
@@ -15,11 +17,15 @@ classificationList.addEventListener("change", function() {
         .then(function(data){
             console.log(data)
             buildInventoryList(data)
+            document.querySelector("table").style.display = "inline-block"
         })
         .catch(function(error){
             console.log("JSON fetch error: ", error.message)
             throw Error('Fetch of JSON data failed')
         })
+    } else {
+        document.querySelector("table").style.display = "none"
+    }
 })
 
 
@@ -44,3 +50,4 @@ function buildInventoryList (data){
     // Display the contents in the Inventory Management view 
     inventoryDisplay.innerHTML = dataTable; 
 }
+

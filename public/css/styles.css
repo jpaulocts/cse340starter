@@ -209,6 +209,7 @@ figcaption {
 
 }
 
+
 #inv-display li {
 
   display: grid;
@@ -353,6 +354,20 @@ select {
   
 }
 
+
+table {
+
+  border: 1px solid;
+  width: 60%;
+  margin: 1rem;
+  border-collapse: collapse;
+  
+  }
+
+table th {
+  text-align: left;
+}
+
 @media screen and (min-width: 650px) 
 {
   
@@ -450,5 +465,9 @@ select {
   padding: 0;
 }
 
+table {
+
+  width: 30%;
+}
 
 }

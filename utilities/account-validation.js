@@ -289,5 +289,121 @@ validate.checkLoginData = async (req, res, next) => {
 }
 
 
+/*********
+ * Edit inventory valdiation
+ */
+
+// Edit vehicle validation
+
+validate.editRules = () => {
+    return [
+        body("classification_name")
+            .notEmpty()
+            .not().equals('Select an option').withMessage('Please, select an option.'),
+
+        //inv Make is required and must be string
+        body("inv_make")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isLength({min: 3})
+            .withMessage("Please provide a Make"), //message sent when error
+
+        body("inv_model")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isLength({min: 3})
+            .withMessage("Please provide a Model"), //message sent when error
+
+        body("inv_description")
+            .notEmpty()
+            .escape()
+            .withMessage("Provide a description"),
+        
+        body("inv_image")
+            .notEmpty()
+            .withMessage("Provide a image path"),
+
+        body("inv_thumbnail")
+            .notEmpty()
+            .withMessage("Provide a thumbnail path"),
+
+        body("inv_price")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isNumeric()            
+            .withMessage("A valid price is required"), //message sent when error
+           
+        
+        body("inv_year")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isNumeric()
+            .isLength({min:4, max: 4}).withMessage("The year should be 4 digits input")
+            .withMessage('The year does not meet the requirements'),
+
+            body("inv_miles")
+            .trim()
+            .escape()
+            .notEmpty()
+            .isNumeric()
+            .withMessage('The miles value is invalid.'),
+
+        body("inv_color")
+            .notEmpty()
+            .withMessage("Provide a color")
+
+
+    ]
+
+
+}
+
+
+/***Check data */
+
+validate.checkEdit = async (req, res, next) => {
+    const {inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, inv_id} = req.body
+    let errors = []
+    errors = validationResult(req)
+    if(!errors.isEmpty()) {
+        const inv_Id = parseInt(inv_id)
+        const invData = await invModel.getDetailsById(inv_Id)
+        let nav = await utilities.getNav()
+        let select = await utilities.getOptions()
+        const itemName = `${invData[0].inv_make} ${invData[0].inv_model}`
+        res.render("inventory/edit-inventory", {
+            errors, 
+            title: "Edit " + itemName,
+            nav,
+            select,
+            inv_make: invData[0].inv_make,
+            inv_model: invData[0].inv_model,
+            inv_year: invData[0].inv_year,
+            inv_description: invData[0].inv_description,
+            inv_image: invData[0].inv_image,
+            inv_thumbnail:invData[0].inv_thumbnail, 
+            inv_price:invData[0].inv_price, 
+            inv_miles: invData[0].inv_miles, 
+            inv_color: invData[0].inv_color,
+            inv_id : invData[0].inv_id
+            
+        })
+        return
+        
+    }
+    
+    next()
+
+   
+}
+
+
+
+
+
 
  module.exports = validate
