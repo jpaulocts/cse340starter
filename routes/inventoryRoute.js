@@ -19,11 +19,11 @@ router.get("/trigger", utilities.handleErrors(errorController.triggerError))
 
 //Routes to management views
 
-router.get("/", utilities.handleErrors(invController.buildManagement))
+router.get("/", utilities.checkAccountType, utilities.handleErrors(invController.buildManagement))
 
-router.get("/add-classification", utilities.handleErrors(invController.buildAddClassification))
+router.get("/add-classification", utilities.checkAccountType, utilities.handleErrors(invController.buildAddClassification))
 
-router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory))
+router.get("/add-inventory", utilities.checkAccountType, utilities.handleErrors(invController.buildAddInventory))
 
 // Post Form routes
 
@@ -37,12 +37,12 @@ router.get("/getInventory/:classification_id", utilities.handleErrors(invControl
 
 // edit route
 
-router.get("/edit/:inv_id", utilities.handleErrors(invController.buildInvEdit))
+router.get("/edit/:inv_id", utilities.checkAccountType, utilities.handleErrors(invController.buildInvEdit))
 router.post("/update/", regValidate.editRules(), regValidate.checkEdit, utilities.handleErrors(invController.updateInventory))
 
 // delete route
 
-router.get("/delete/:inv_id", utilities.handleErrors(invController.deleteView))
+router.get("/delete/:inv_id", utilities.checkAccountType, utilities.handleErrors(invController.deleteView))
 router.post("/delete", utilities.handleErrors(invController.deleteItem))
 
 

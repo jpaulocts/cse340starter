@@ -85,17 +85,19 @@ accountController.registerAccount = async function(req, res) {
     }
     try {
         console.log("Checking credentials")
-        if(bcrypt.compare(account_password, accountData.account_password)){
+        if( bcrypt.compare(account_password, accountData.account_password)){
             console.log("Deleting password....")
+            console.log(account_password, accountData.account_password)
             delete accountData.account_password
             console.log("Password ok!")
             const accessToken = jwt.sign(accountData, process.env.ACCESS_TOKEN_SECRET, {expiresIn: 3600})
+            console.log("Access Token: ", accessToken)
             if(process.env.NODE_ENV === 'development') {
                 res.cookie("jwt", accessToken, {httpOnly: true, maxAge: 3600*1000})
             } else{
                 res.cookie("jwt", accessToken,{httpOnly: true, secure: true, maxAge: 3600*1000})
             }
-            return res.redirect("/account/")
+            return res.redirect("/account")
         }
     } catch(error){
         return new Error("Access Forbiden")
@@ -103,9 +105,49 @@ accountController.registerAccount = async function(req, res) {
 }
 
 accountController.buildAccount = async function(req, res, next){
-    let div = utilities.accountLinks()
+    const token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const accountType = decoded.account_type
+    const firstName = decoded.account_firstname
+    const lastName = decoded.account_lastname
+    const email = decoded.account_email
+    const account_id = parseInt(decoded.account_id)
+    let div = utilities.accountLinks(account_id)
     let nav = await utilities.getNav()
-    res.render("./account/management", {title: "Account Management", nav, div, errors:null})
+    res.render("./account/management", {title: "Account Management", nav, div,firstName, lastName, email, account_id, accountType, errors:null})
 }
+
+
+accountController.buildUpdate = async function(req, res, next) {
+        const token = req.cookies.jwt
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const accountType = decoded.account_type
+        const firstName = decoded.account_firstname
+        const lastName = decoded.account_lastname
+        const email = decoded.account_email
+        const account_id = parseInt(decoded.account_id)
+    let nav = await utilities.getNav()
+    res.render("./account/update", {
+        title: "Edit Account",
+        nav,
+        errors: null,
+        account_firstname: firstName,
+        account_lastname: lastName,
+        account_email: email,
+        account_id: account_id
+
+})
+}
+
+
+//Log out
+
+accountController.logout = (req, res, next) => {
+    res.clearCookie('jwt')
+    res.redirect('/');
+}
+
+
+
 
 module.exports = accountController

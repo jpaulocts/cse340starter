@@ -103,8 +103,9 @@ Util.getOptions = async function (req, res, next){
   return options
 }
 
-Util.accountLinks = function() {
-  let div = '<div class="mnglink"><p>You are logged in</p><a href="#" target="_blank">Edit Account Information</a></div>'
+Util.accountLinks = function(account_id) {
+
+  let div = `<div class="mnglink"><p>You are logged in</p><a href="../account/update/${account_id}" target="_blank">Edit Account Information</a></div>`
   return div
 }
 
@@ -113,15 +114,19 @@ Util.checkJWTToken = async function(req, res, next) {
     jwt.verify(req.cookies.jwt, process.env.ACCESS_TOKEN_SECRET, function(err, accountData){
       if(err) {
         req.flash("Please log in")
-        res.cleaCookie("jwt")
+        res.clearCookie("jwt")
+        res.locals.loggedin = 0
         return res.redirect("../account/login")
       }
       res.locals.accountData = accountData
+      console.log("ATTENTION:", accountData)
       res.locals.loggedin = 1
       next()
     })
   } else{
+    res.locals.loggedin = 0
     next()
+
   }
 }
 
@@ -140,5 +145,32 @@ Util.checkLogin = (req, res, next) => {
  * General error handling
  */
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
+
+//Check account type
+
+
+Util.checkAccountType = (req, res, next) => {
+  const token = req.cookies.jwt;
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      if (decoded.account_type === 'Employee' || decoded.account_type === 'Admin') {
+        next(); // Check account type
+      } else {
+        req.flash('notice', 'Access denied. Please log in with an appropriate account.');
+        return res.redirect('/account/login'); // Redirection
+      }
+    } catch (err) {
+      req.flash('notice', 'Invalid token. Please log in.');
+      return res.redirect('/account/login'); // Redirection
+    }
+  } else {
+    req.flash('notice', 'No token found. Please log in.');
+    return res.redirect('/account/login'); // Redirection
+  }
+};
+
+
+
 
 module.exports = Util
