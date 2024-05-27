@@ -85,7 +85,7 @@ accountController.registerAccount = async function(req, res) {
     }
     try {
         console.log("Checking credentials")
-        if( bcrypt.compare(account_password, accountData.account_password)){
+        if( await bcrypt.compare(account_password, accountData.account_password)){
             console.log("Deleting password....")
             console.log(account_password, accountData.account_password)
             delete accountData.account_password
@@ -180,7 +180,7 @@ accountController.registerPassword = async function(req, res) {
     } 
 
     const regResult = await accountModel.registerPassword(
-        account_password,
+        hashedPassword,
         account_id,
     )
 
@@ -189,7 +189,7 @@ accountController.registerPassword = async function(req, res) {
         res.redirect('/account')
     } else{
         req.flash("notice", "Sorry, the update failed.")
-        res.redirect('/account/update')
+        res.redirect('account/update')
     }
 
 }
