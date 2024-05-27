@@ -142,6 +142,58 @@ accountController.buildUpdate = async function(req, res, next) {
 })
 }
 
+accountController.registerUpdate = async function(req, res) {
+    let nav = await utilities.getNav()
+    const {account_firstname, account_lastname, account_email, account_id} = req.body
+
+    const regResult = await accountModel.registerUpdate(
+        account_firstname,
+        account_lastname,
+        account_email,
+        account_id,
+    )
+
+    if (regResult) {
+        req.flash("notice", `Congratulations, you have updated ${account_firstname} account.`)
+        res.redirect('/account')
+    } else{
+        req.flash("notice", "Sorry, the update failed.")
+        res.status(501).render("./account/update", {
+            title: "Edit Account",
+            nav,
+        })
+    }
+
+}
+
+accountController.registerPassword = async function(req, res) {
+    let nav = await utilities.getNav()
+    const {account_password, account_id} = req.body
+
+    let hashedPassword
+    try{
+        hashedPassword = await bcrypt.hashSync(account_password, 10)
+    } catch (error) {
+        req.flash("notice", 'Sorry, there was an error processing in the password editing.')
+        res.redirect('account/update')
+
+    } 
+
+    const regResult = await accountModel.registerPassword(
+        account_password,
+        account_id,
+    )
+
+    if (regResult) {
+        req.flash("notice", `Congratulations, you have updated ${account_firstname} password.`)
+        res.redirect('/account')
+    } else{
+        req.flash("notice", "Sorry, the update failed.")
+        res.redirect('/account/update')
+    }
+
+}
+
 
 //Log out
 

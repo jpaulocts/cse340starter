@@ -18,8 +18,8 @@ router.get('/logout', utilities.handleErrors(accountController.logout))
 
 router.get('/update/:account_id', utilities.checkLogin, utilities.handleErrors(accountController.buildUpdate))
 
-router.post("/update", regValidate.registrationRules(), regValidate.checkRegData, utilities.handleErrors(accountController.registerAccount))
+router.post("/update", regValidate.updateRules(), regValidate.checkUpdateData, utilities.handleErrors(accountController.registerUpdate))
 
-router.post("/password", regValidate.registrationRules(), regValidate.checkRegData, utilities.handleErrors(accountController.registerAccount))
+router.post("/password", regValidate.passwordRules(), regValidate.checkPassword, utilities.handleErrors(accountController.registerPassword))
 
 module.exports = router

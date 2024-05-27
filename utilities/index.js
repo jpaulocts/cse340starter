@@ -119,7 +119,6 @@ Util.checkJWTToken = async function(req, res, next) {
         return res.redirect("../account/login")
       }
       res.locals.accountData = accountData
-      console.log("ATTENTION:", accountData)
       res.locals.loggedin = 1
       next()
     })
@@ -137,7 +136,7 @@ Util.checkLogin = (req, res, next) => {
     next()
   } else {
     req.flash("notice", "Please log in")
-    return res.redirect("../account/login")
+    return res.redirect("../login")
   }
 } 
 /**********Middleware For Handling Errors
