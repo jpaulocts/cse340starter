@@ -119,13 +119,15 @@ accountController.buildAccount = async function(req, res, next){
 
 
 accountController.buildUpdate = async function(req, res, next) {
-        const token = req.cookies.jwt
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-        const accountType = decoded.account_type
-        const firstName = decoded.account_firstname
-        const lastName = decoded.account_lastname
-        const email = decoded.account_email
-        const account_id = parseInt(decoded.account_id)
+        const account_Id = parseInt(req.params.account_id)
+        console.log("OK", account_Id)
+        const dataAccount = await accountModel.getDataByAccountId(account_Id)
+        console.log("UPDATE",dataAccount)
+        const accountType = dataAccount.account_type
+        const firstName = dataAccount.account_firstname
+        const lastName = dataAccount.account_lastname
+        const email = dataAccount.account_email
+        const account_id = parseInt(dataAccount.account_id)
     let nav = await utilities.getNav()
     res.render("./account/update", {
         title: "Edit Account",
@@ -134,6 +136,7 @@ accountController.buildUpdate = async function(req, res, next) {
         account_firstname: firstName,
         account_lastname: lastName,
         account_email: email,
+        accountType: accountType,
         account_id: account_id
 
 })
