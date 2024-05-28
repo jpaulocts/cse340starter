@@ -98,6 +98,14 @@ accountController.registerAccount = async function(req, res) {
                 res.cookie("jwt", accessToken,{httpOnly: true, secure: true, maxAge: 3600*1000})
             }
             return res.redirect("/account")
+        } else { 
+            req.flash("message notice", "Please check your credentials and try again.");
+            res.status(400).render("account/login", {
+            title: "Login",
+            nav,
+            errors: null,
+            account_email,
+      })
         }
     } catch(error){
         return new Error("Access Forbiden")
@@ -185,7 +193,8 @@ accountController.registerPassword = async function(req, res) {
     )
 
     if (regResult) {
-        req.flash("notice", `Congratulations, you have updated ${account_firstname} password.`)
+        let data = accountModel.getDataByAccountId(account_id)
+        req.flash("notice", `Congratulations, you have updated ${data.account_firstname} password.`)
         res.redirect('/account')
     } else{
         req.flash("notice", "Sorry, the update failed.")
