@@ -1,5 +1,8 @@
 const invModel = require("../models/inventory-model")
 const utilities = require("../utilities/")
+const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
 
 const invCont = {}
 
@@ -51,8 +54,13 @@ invCont.registerClassForm = async function(req, res) {
     let nav = await utilities.getNav()
     let div = utilities.managerLinks()
     const {classification_name} = req.body
-    
-    const regResult = await invModel.registerClass(classification_name)
+    const token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const account_type = decoded.account_type
+    const account_id = decoded.account_id
+
+    const regResult = await invModel.registerClass(classification_name, account_type, account_id)
+    console.log(regResult, "registerClassForm function")
 
     if (regResult) {
         req.flash("notice", `Congratulations, you are registered a ${classification_name} type.`)
@@ -72,8 +80,12 @@ invCont.registerInvForm = async function(req, res) {
     let select = await utilities.getOptions()
     let div = utilities.managerLinks()
     const {inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_name} = req.body
+    const token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const account_type = decoded.account_type
+    const account_id = decoded.account_id
     
-    const regResult = await invModel.registerInv(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_name)
+    const regResult = await invModel.registerInv(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_name, account_type, account_id)
     console.log(regResult)
 
     if (regResult) {
@@ -201,6 +213,119 @@ invCont.deleteItem = async function (req, res, next){
         res.redirect(`/inv/delete/${inv_id}`)
     }
 }
+
+invCont.buildAdminView = async function(req, res, next) {
+    let nav = await utilities.getNav()
+    dataItems = await invModel.getItemsToApproval()
+    dataClassifications = await invModel.getClassificationsToApproval()
+    grid = await utilities.buildClassificationItemsToApprovalGrid(dataItems)
+    div = await utilities.buildClassificationsToApprovalGrid(dataClassifications)
+    res.render("./inventory/admin", {title:"Manager Control", 
+    nav, 
+    grid, 
+    div, 
+    errors:null
+
+})
+
+}
+
+// Decline Controller
+
+invCont.declineClass = async function (req, res, next) {
+    classification_id = req.body.classification_id
+    let nav = await utilities.getNav()
+
+    const deleteResult = await invModel.deleteClassSuggestion(classification_id)
+
+    if(deleteResult){
+        req.flash("notice", 'The deletion was sucessful.')
+        res.redirect('../inv/admin')
+    } else {
+        req.flash("notice", 'The deletion failed.')
+        res.redirect(`../inv/admin/`)
+    }
+
+}
+
+
+invCont.deleteAddedItem = async function (req, res, next){
+    let nav = await utilities.getNav()
+    const inv_id = parseInt(req.body.inv_id)
+
+    const deleteResult = await invModel.deleteInventoryItem(inv_id)
+
+    if(deleteResult){
+        req.flash("notice", 'The deletion was sucessful.')
+        res.redirect('../inv/admin')
+    } else {
+        req.flash("notice", 'The deletion failed.')
+        res.redirect(`../inv/admin`)
+    }
+}
+
+// accept class
+
+invCont.acceptClass = async function (req, res, next){
+    dataItems = await invModel.getItemsToApproval()
+    dataClassifications = await invModel.getClassificationsToApproval()
+    grid = await utilities.buildClassificationItemsToApprovalGrid(dataItems)
+    div = await utilities.buildClassificationsToApprovalGrid(dataClassifications)
+    let nav = await utilities.getNav()
+    classification_id = req.body.classification_id
+    token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const account_id = decoded.account_id
+
+    const acceptResult = await invModel.updateClassSuggestion(classification_id, account_id)
+
+    if(acceptResult){
+        req.flash("notice", 'The addition was sucessful.')
+        res.render("./inventory/admin", {title:"Manager Control", 
+        nav, 
+        grid, 
+        div, 
+        errors: null
+
+    })
+    } else {
+        req.flash("notice", 'The addition failed.')
+        res.redirect(`../inv/admin/`)
+    }
+
+}
+
+//accept item
+
+invCont.acceptInventory = async function (req, res, next){
+    dataItems = await invModel.getItemsToApproval()
+    dataClassifications = await invModel.getClassificationsToApproval()
+    grid = await utilities.buildClassificationItemsToApprovalGrid(dataItems)
+    div = await utilities.buildClassificationsToApprovalGrid(dataClassifications)
+    let nav = await utilities.getNav()
+    inv_id = parseInt(req.body.inv_id)
+    token = req.cookies.jwt
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    const account_id = decoded.account_id
+
+    const acceptResult = await invModel.updateItemSuggestion(inv_id, account_id)
+
+    if(acceptResult){
+        req.flash("notice", 'The addition was sucessful.')
+        res.render("./inventory/admin", {title:"Manager Control", 
+        nav, 
+        grid, 
+        div, 
+        errors: null
+
+    })
+    } else {
+        req.flash("notice", 'The addition failed.')
+        res.redirect(`../inv/admin/`)
+    }
+
+}
+
 
 
 module.exports = invCont

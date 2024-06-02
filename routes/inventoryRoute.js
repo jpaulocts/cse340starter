@@ -45,5 +45,24 @@ router.post("/update/", regValidate.editRules(), regValidate.checkEdit, utilitie
 router.get("/delete/:inv_id", utilities.checkAccountType, utilities.handleErrors(invController.deleteView))
 router.post("/delete", utilities.handleErrors(invController.deleteItem))
 
+// Admin new classifications and inventory items that have been added
+
+router.get("/admin", utilities.checkAdminAccount, utilities.handleErrors(invController.buildAdminView))
+
+// Decline class route
+
+router.post("/decline", utilities.checkAdminAccount, utilities.handleErrors(invController.declineClass))
+
+// Accept class route
+
+router.post("/accept", utilities.checkAdminAccount, utilities.handleErrors(invController.acceptClass))
+
+// Disapprove new inventory
+
+router.post("/disapprove", utilities.checkAdminAccount, utilities.handleErrors(invController.deleteAddedItem))
+
+// Approve new inventory
+
+router.post("/approve", utilities.checkAdminAccount, utilities.handleErrors(invController.acceptInventory))
 
 module.exports = router;
