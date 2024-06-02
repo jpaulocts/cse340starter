@@ -170,6 +170,95 @@ Util.checkAccountType = (req, res, next) => {
 };
 
 
+Util.buildClassificationItemsToApprovalGrid = async function(data){
+  let grid
+  if (data.length > 0) {
+      grid = '<ul id="inv-display">'
+      for (const vehicle of data) { 
+        let classData = await invModel.getClassificationName(parseInt(vehicle.classification_id))
+        grid += '<li>'
+        grid +=  '<img src="' + vehicle.inv_thumbnail 
+        +'" alt="Image of '+ vehicle.inv_make + ' ' + vehicle.inv_model 
+        +' on CSE Motors" />'
+        grid += '<div class="namePrice">'
+        grid += '<hr />'
+        grid += '<h2>'
+        grid += vehicle.inv_make + ' ' + vehicle.inv_model + ' ' + vehicle.inv_year + ' ' +  vehicle.inv_color
+        grid += '</h2>'
+        grid += `<span> ${classData.classification_name}`
+        grid+= '<hr />'
+        grid += '<span>$' 
+        + new Intl.NumberFormat('en-US').format(vehicle.inv_price) + '</span>'
+        grid +='<hr />'
+        grid += `<span> ${Number(vehicle.inv_miles).toLocaleString('en')} miles`
+        grid+= '<hr />'
+        grid += '<form class="admintable" action="/inv/approve" method="post">'
+        grid += `<input type="hidden" name=inv_id value=${vehicle.inv_id}></input>`
+        grid += '<button type="submit" id="approve">Approve</button>'
+        grid +='</form>'
+        grid +='<form class="admintable" action="/inv/disapprove" method="post">'
+        grid += `<input type="hidden" name=inv_id value=${vehicle.inv_id}</input>`
+        grid += '<button type="submit" id="disapprove">Disapprove</button>'
+        grid +='</form>'
+        grid += '</div>'
+        grid += '</li>'
+      }
+      grid += '</ul>'
+    } else { 
+      grid = '<p class="notice"> There is no new vehicles to evaluate.</p>'
+    }
+    return grid
+    
+}
+
+Util.buildClassificationsToApprovalGrid = async function (data) {
+  let table
+  if(data.length > 0){
+    table = '<table id="suggested">' 
+    table += '<thead><tr><th> Class Name</th><th>Actions</th></tr></thead>'
+    table += '<tbody>' 
+    data.forEach(classification =>{
+      table +=`<tr><td>${classification.classification_name}</td>`
+      table += `<td><form class="admintable" action="/inv/accept" method="post" style="inline;">`
+      table += `<input type="hidden" name="classification_id" value="${classification.classification_id}">`
+      table += `<button type="submit">Accept</button></form>`
+      table += `<form class=admintable action="/inv/decline" method="post" style="inline;">`
+      table += `<input type="hidden" name="classification_id" value="${classification.classification_id}">`
+      table += `<button type="submit">Decline</button></form></td></tr>`
+
+    })
+
+    table += '</tbody>'
+    table += '</table>'
+  } else {
+    table = '<p class="notice"> No classes were suggested</p>'
+  }
+  return table
+
+}
+
+Util.checkAdminAccount = (req, res, next) => {
+  const token = req.cookies.jwt;
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      if (decoded.account_type === 'Admin') {
+        next(); // Check account type
+      } else {
+        req.flash('notice', 'Access denied. Please log in with an appropriate account.');
+        return res.redirect('/account/login'); // Redirection
+      }
+    } catch (err) {
+      req.flash('notice', 'Invalid token. Please log in.');
+      return res.redirect('/account/login'); // Redirection
+    }
+  } else {
+    req.flash('notice', 'No token found. Please log in.');
+    return res.redirect('/account/login'); // Redirection
+  }
+};
+
+
 
 
 module.exports = Util

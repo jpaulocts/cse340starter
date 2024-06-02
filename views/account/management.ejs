@@ -12,3 +12,7 @@
     <h3>Inventory Management</h3>
     <p><a href="/inv">Manage Inventory</a></p>
   <% } %>
+  <% if (accountType === 'Admin') { %>
+    <h3>Inventory New Classes and Inventories</h3>
+    <p><a href="../inv/admin">New added classes and items</a></p>
+  <% } %>
