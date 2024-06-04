@@ -281,13 +281,7 @@ invCont.acceptClass = async function (req, res, next){
 
     if(acceptResult){
         req.flash("notice", 'The addition was sucessful.')
-        res.render("./inventory/admin", {title:"Manager Control", 
-        nav, 
-        grid, 
-        div, 
-        errors: null
-
-    })
+        res.redirect(`../inv/admin`)
     } else {
         req.flash("notice", 'The addition failed.')
         res.redirect(`../inv/admin/`)
@@ -304,6 +298,7 @@ invCont.acceptInventory = async function (req, res, next){
     div = await utilities.buildClassificationsToApprovalGrid(dataClassifications)
     let nav = await utilities.getNav()
     inv_id = parseInt(req.body.inv_id)
+    classification_id = parseInt(req.body.classification_id)
     token = req.cookies.jwt
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
     const account_id = decoded.account_id
@@ -312,13 +307,7 @@ invCont.acceptInventory = async function (req, res, next){
 
     if(acceptResult){
         req.flash("notice", 'The addition was sucessful.')
-        res.render("./inventory/admin", {title:"Manager Control", 
-        nav, 
-        grid, 
-        div, 
-        errors: null
-
-    })
+        res.redirect(`../inv/admin/`)
     } else {
         req.flash("notice", 'The addition failed.')
         res.redirect(`../inv/admin/`)
